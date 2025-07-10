@@ -1,130 +1,216 @@
-import { CreditCard } from '../clases/Client.js';
-import { DebitCard } from '../clases/CreditCard.js';
-import { SavingsBank } from '../clases/DebitCard.js';
-import { Client } from '../clases/Movements.js';
-import { Movement } from '../clases/savingBank.js';
+let currentScreen = 0;
+let currentClient = null;
 
-
-// 9)
 function searchClientById(clientID) {
-    for (let i = 0; i < clients.lenght; i++) {
-        if (clients[i].id == clientID) {
-            consolelog(i)
-            return i
+    for (let i = 0; i < clients.length; i++) {
+        if (clients[i].id === clientID) {
+            console.log(i + 1);
+            return i;
         }
     }
-
 }
 
-// 10)
+window.searchClientById = searchClientById;
+
 function searchSavingBankByClientID(clientID) {
-    for (let i = 0; i < clients.lenght; i++) {
-        if (clients[i].id == clientID) {
-            consolelog(clients[i].savingsBanks)
-            return clients[i].savingsBanks
-        }
-    }
+    const client = clients.find(c => c.id === clientID);
+    return client ? client.savingsBanks : null;
 }
 
-// 11)
 function searchDebitCardsByClientID(clientID) {
-    for (let i = 0; i < clients.lenght; i++) {
-        if (clients[i].id == clientID) {
-            for (let h = 0; h < clients[i].savingsBanks[j].debitCards.lenght; h++) {
-                consolelog(clients[i].savingsBanks[j].debitCards[h])
-                return clients[i].savingsBanks[j].debitCards[h]
-            }
-        }
+    const client = clients.find(c => c.id === clientID);
+    if (!client) return null;
+
+    let allCards = [];
+    for (let sb of client.savingsBanks) {
+        allCards.push(...sb.debitCards);
     }
+    return allCards;
 }
 
-// 12)
 function searchDebitCardsByCardID(debitCardID) {
-    for (let i = 0; i < clients.lenght; i++) {
-        for (let j = 0; j < clients[i].savingsBanks.lenght; j++) {
-            for (let h = 0; h < clients[i].savingsBanks[j].debitCards.lenght; h++) {
-                if (clients[i].savingsBanks[j].debitCards[h].id == debitCardID) {
-                    consolelog("la tajeta:", debitCards[h], "es de", clients[i])
-                    return clients[i]
+    for (let client of clients) {
+        for (let sb of client.savingsBanks) {
+            for (let card of sb.debitCards) {
+                if (card.id === debitCardID) {
+                    console.log("la tarjeta:", card, "es de", client);
+                    return client;
                 }
             }
         }
-
     }
 }
 
-// 13)
 function searchCreditCardsByClientID(clientID) {
-    for (let i = 0; i < clients.lenght; i++) {
-        if (clients[i].id == clientID) {
-            for (let j = 0; j < clients[i].creditCards.lenght; j++) {
-                consolelog(clients[i].creditCards[j])
-                return clients[i].creditCards[j]
-            }
-        }
-    }
+    const client = clients.find(c => c.id === clientID);
+    return client ? client.creditCards : null;
 }
 
-// 14) 
 function searchCreditCardsByCardID(creditCardID) {
-    for (let i = 0; i < clients.lenght; i++) {
-        for (let j = 0; j < clients[i].creditCards.lenght; j++) {
-            if (clients[i].creditCards[j] == creditCardID) {
-                consolelog(clients[i].creditCards[j])
-                return clients[i].creditCards[j]
+    for (let client of clients) {
+        for (let card of client.creditCards) {
+            if (card.id === creditCardID) {
+                return card;
             }
         }
     }
 }
 
-// 15)
 function searchMovementsBySavingBankID(savingBankID) {
-    for (let i = 0; i < savingBanks.lenght; i++) {
-        if (savingBanks[i].id == savingBankID) {
-            for (let j = 0; j < savingBanks[i].movements.lenght; j++) {
-                consolelog(savingBanks[i].movements[j])
-                return savingBanks[i].movements[j]
-            }
-        }
-    }
+    const bank = savingBanks.find(sb => sb.id === savingBankID);
+    return bank ? bank.movements : null;
 }
 
-// 16)
 function searchMovementsByDebitCardID(debitCardID) {
-    for (let i = 0; i < debitCards.lenght; i++) {
-        if (debitCards[i] == debitCardID) {
-            return debitCards[i].consumptions
-        }
+    const card = debitCards.find(dc => dc.id === debitCardID);
+    return card ? card.movements : null;
+}
+
+function searchMovementsByCreditCardID(creditCardID) {
+    const card = creditCards.find(cc => cc.id === creditCardID);
+    return card ? card.consumptions : null;
+}
+
+function moneyTransfer(amount, idOrigin, idDestination) {
+    if (!amount || !idOrigin || !idDestination) {
+        console.log("Faltan datos para la transferencia");
+        return false;
+    }
+
+    const originAccount = savingBanks.find(sb => sb.id === idOrigin);
+    const destinationAccount = savingBanks.find(sb => sb.id === idDestination);
+
+    if (!originAccount || !destinationAccount) {
+        console.log("Cuenta origen o destino no encontrada");
+        return false;
+    }
+
+    originAccount.withdrawMoneyFromAccount(amount);
+    destinationAccount.depositMoneyIntoSavingBank(amount);
+    return true;
+}
+
+function changeScreen() {
+    let paginaUsuario = ui.getpaginaUsuario();
+    let inicioSesionUsuario = ui.getinicioSesionUsuario();
+    let menuHamburguesa = document.getElementById("menuHamburguesa");
+
+    if (!paginaUsuario || !inicioSesionUsuario || !menuHamburguesa) {
+        console.error("No se encontraron elementos necesarios para cambiar de pantalla");
+        return;
+    }
+
+    if (currentScreen === 0) {
+        paginaUsuario.style.display = "none";
+        inicioSesionUsuario.style.display = "block";
+        menuHamburguesa.style.display = "none";
+    } if (currentScreen === 1) {
+        formularios.style.display = "none";
+        paginaUsuario.style.display = "block";
+        menuHamburguesa.style.display = "block";
     }
 }
 
-// 17)
-function searchMovementsByCreditCardID(creditCardID){
-    for (let i = 0; i < creditCards.lenght; i++) {
-        if (creditCards[i] == creditCardID) {
-            return creditCards[i].consumptions
-        }
+
+
+// 24)
+function login() {
+    let dni = ui.getDNI();
+    let password = ui.getPassword();
+
+    const client = clients.find(c => c.dni === dni && c.password === password);
+
+    if (client) {
+        alert("Has ingresado correctamente");
+        currentScreen = 1;
+        currentClient = client;
+        changeScreen();
+        ui.selectPaymentMethods();
+        ui.showAccountsOrigin();
+        ui.showAccountsDestiny();
+        ui.showDollarAccounts();
+        ui.showPesosAccounts();
+        ui.showDebitCardInfo();
+        ui.showCreditCards();
+        ui.selectCreditCards();
+        ui.selectSavingsBank();
+        ui.investmentAccountSelect();
+        ui.showAccounts();
+
+    } else {
+        alert("Ha ocurrido un error. Verifique que los datos estén correctamente ingresados");
     }
 }
 
-// 23) 
-function moneyTransfer(amountInPesos, idOrigin, idDestination){
-        if (!amountInPesos && !idOrigin && !idDestination) {
-            for (let i = 0; i < savingBanks.lenght; i++) {
-                if (savingBanks[i] == idOrigin) {
-                    withdrawMoneyFromAccount(amount)
-                    return true
-                }
-            }
-            for (let i = 0; i < savingBanks.lenght; i++) {
-                if (savingBanks[i] == idDestination) {
-                    depositMoneyIntoSavingBank(amount)
-                    return true
-                }
-            }
-            return true
-        } else {
-            return false
-        }
 
+window.addEventListener("DOMContentLoaded", () => {
+    changeScreen();
+
+    const loginForm = document.getElementById("loginForm");
+    loginForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        login();
+    });
+});
+
+//25) 
+function registrarse() {
+    let dni = ui.getRegisterDNI();
+    let name = ui.getRegisterName();
+    let email = ui.getRegisterEmail();
+    let lastName = ui.getRegisterLastName();
+    let password = ui.getRegisterPassword();
+
+    if (dni && name && email && lastName && password) {
+        new Client(dni, password, name, lastName, email)
+        alert("Te has registrado correctamente!");
+
+        currentScreen = 1;
+        changeScreen();
+        ui.selectPaymentMethods();
+        ui.showAccountsOrigin();
+        ui.showAccountsDestiny();
+        ui.showDollarAccounts();
+        ui.showPesosAccounts();
+        ui.showDebitCardInfo();
+        ui.showCreditCards();
+        ui.selectCreditCards();
+        ui.selectSavingsBank();
+        ui.investmentAccountSelect();
+        ui.showAccounts();
+
+
+    } else {
+        alert("Por favor, complete todos los campos");
+    }
 }
+
+document.getElementById("registerForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    registrarse();
+});
+
+// 26)
+function logout() {
+    currentScreen = 0;
+    changeScreen();
+    ui.clearLoginForm();
+    ui.clearRegisterForm();
+    const offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById("offcanvasMenu"));
+    if (offcanvas) {
+        offcanvas.hide();
+    }
+}
+
+window.searchSavingBankByClientID = searchSavingBankByClientID;
+window.searchDebitCardsByClientID = searchDebitCardsByClientID;
+window.searchDebitCardsByCardID = searchDebitCardsByCardID;
+window.searchCreditCardsByClientID = searchCreditCardsByClientID;
+window.searchCreditCardsByCardID = searchCreditCardsByCardID;
+window.searchMovementsBySavingBankID = searchMovementsBySavingBankID;
+window.searchMovementsByDebitCardID = searchMovementsByDebitCardID;
+window.searchMovementsByCreditCardID = searchMovementsByCreditCardID;
+window.moneyTransfer = moneyTransfer;
+window.changeScreen = changeScreen;
+window.login = login;
+window.registrarse = registrarse;

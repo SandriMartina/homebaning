@@ -1,26 +1,38 @@
-let id = 1;
+let debitsCardsId = 1;
 let cardsNumbers = 1000000000000000;
 
 class DebitCard {
-    constructor(proveedor, codigoSeguridad, nombreEscrito) {
-        this.idTarjetaDebito = id++;
-        this.numeroTarjetaDebito = cardsNumbers++;
-        this.proveedor = proveedor;
+    constructor(provider, emitionDate, securityCode, displayName) {
+        this.id = debitsCardsId;
+        debitsCardsId++;
 
-        this.emision = new Date();
-        const año = this.emision.getFullYear() + 5;
-        const mes = (this.emision.getMonth() + 1).toString().padStart(2, '0');
-        this.vencimientoTarjetaDebito = `${mes}/${año}`;
+        this.cardNumber = cardsNumbers;
+        cardsNumbers++;
 
-        this.codigoSeguridad = codigoSeguridad;
-        this.nombreEscrito = nombreEscrito;
-        this.historialConsumos = [];
+        this.provider = provider;
+
+        this.expirationDate = new Date(emitionDate);
+        this.expirationDate.setFullYear(this.expirationDate.getFullYear() + 5);
+
+        this.securityCode = securityCode;
+        this.displayName = displayName;
+
+        this.consumptions = [];
+        this.movements = [];
+        this.balance = 0; // agregado para registrar movimientos
+    }
+
+    recordDebitCardMovements(idThirdPartyInvolved, amount) {
+        try {
+            this.balance += amount;
+            this.movements.push(new Movement(idThirdPartyInvolved, amount, 0));
+            return true;
+        } catch (e) {
+            console.log("Error al registrar movimiento de débito:", e);
+            return false;
+        }
     }
 }
 
-const debitCards = [];
-debitCards.push(new DebitCard("Visa", 348, "OLIVIA SERRA"));
-debitCards.push(new DebitCard("Mastercard", 721, "MARTINA R SANDRI"));
-debitCards.push(new DebitCard("Mastercard", 874, "FRANCIS PICCA"));
-debitCards.push(new DebitCard("American Express", 119, "TAYLOR A SWIFT"));
-debitCards.push(new DebitCard("Visa", 243, "A A"));
+window.DebitCard = DebitCard;
+window.debitCards = debitCards;
