@@ -46,6 +46,7 @@ class UserInterface {
         return document.getElementById("registerPassword").value
     }
 
+
     clearLoginForm() {
         document.getElementById("loginDni").value = "";
         document.getElementById("loginPassword").value = "";
@@ -161,33 +162,104 @@ class UserInterface {
 
         const card = account.debitCards[0];
         infoContainer.innerHTML = `
-        <div class="card-body">
-            <h5 class="card-title">${card.provider} •••• ${card.cardNumber.toString().slice(-4)}</h5>
-            <p class="mb-1">Nombre en tarjeta: <span>${card.displayName}</span></p>
-            <p class="mb-2">Vencimiento: <span>${new Date(card.expirationDate).toLocaleDateString()}</span></p>
+    <div class="card-body">
+        <h5 class="card-title">${card.provider} •••• ${card.cardNumber.toString().slice(-4)}</h5>
+        <p class="mb-1">Nombre en tarjeta: <span>${card.displayName}</span></p>
+        <p class="mb-2">Vencimiento: <span>${new Date(card.expirationDate).toLocaleDateString()}</span></p>
 
-            <div class="mb-2">
-                <label class="form-label">Número de tarjeta</label>
-                <div class="input-group">
-                    <input type="text" class="form-control" value="${card.cardNumber}" readonly>
-                    <button class="btn btn-outline-secondary" type="button">
-                        <i class="bi bi-eye"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="mb-2">
-                <label class="form-label">Código de seguridad</label>
-                <div class="input-group">
-                    <input type="password" class="form-control" value="${card.securityCode}" readonly>
-                    <button class="btn btn-outline-secondary" type="button">
-                        <i class="bi bi-eye"></i>
-                    </button>
-                </div>
+        <div class="mb-2">
+            <label class="form-label">Número de tarjeta</label>
+            <div class="input-group">
+                <input type="password" class="form-control card-number-input" value="${card.cardNumber}" readonly>
+                <button class="btn btn-outline-secondary toggle-card-number" type="button">
+                    <i class="bi bi-eye"></i>
+                </button>
             </div>
         </div>
+
+        <div class="mb-2">
+            <label class="form-label">Código de seguridad</label>
+            <div class="input-group">
+                <input type="password" class="form-control card-cvv-input" value="${card.securityCode}" readonly>
+                <button class="btn btn-outline-secondary toggle-cvv" type="button">
+                    <i class="bi bi-eye"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="d-grid mt-3">
+            <button class="btn btn-outline-primary btn-sm view-movements-btn" data-card-id="${card.id}">Ver movimientos</button>
+        </div>
+    </div>
     `;
+
+        // Agregar event listeners para los botones "ojo"
+        const toggleCardNumberBtn = infoContainer.querySelector('.toggle-card-number');
+        const toggleCvvBtn = infoContainer.querySelector('.toggle-cvv');
+        const viewMovementsBtn = infoContainer.querySelector('.view-movements-btn');
+
+        if (toggleCardNumberBtn) {
+            toggleCardNumberBtn.addEventListener('click', () => {
+                const input = infoContainer.querySelector('.card-number-input');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    toggleCardNumberBtn.innerHTML = '<i class="bi bi-eye-slash"></i>';
+                } else {
+                    input.type = 'password';
+                    toggleCardNumberBtn.innerHTML = '<i class="bi bi-eye"></i>';
+                }
+            });
+        }
+
+        if (toggleCvvBtn) {
+            toggleCvvBtn.addEventListener('click', () => {
+                const input = infoContainer.querySelector('.card-cvv-input');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    toggleCvvBtn.innerHTML = '<i class="bi bi-eye-slash"></i>';
+                } else {
+                    input.type = 'password';
+                    toggleCvvBtn.innerHTML = '<i class="bi bi-eye"></i>';
+                }
+            });
+        }
+
+        if (viewMovementsBtn) {
+            viewMovementsBtn.addEventListener('click', () => {
+                const cardId = viewMovementsBtn.getAttribute('data-card-id');
+                this.showDebitCardMovements(cardId);
+            });
+        }
     }
+
+    // Nuevo método para mostrar movimientos de tarjeta de débito
+    showDebitCardMovements(cardId) {
+        const movements = searchMovementsByDebitCardID(parseInt(cardId));
+        const modalTitle = document.getElementById("modalTitle");
+        const modalBody = document.getElementById("modalBody");
+
+        modalTitle.textContent = "Movimientos de la tarjeta de débito";
+        modalBody.innerHTML = "";
+
+        if (!movements || movements.length === 0) {
+            modalBody.innerHTML = "<p>No hay movimientos para esta tarjeta.</p>";
+        } else {
+            movements.forEach(mov => {
+                modalBody.innerHTML += `
+                <div class="mb-2">
+                    <p><strong>Descripción:</strong> ${mov.description}</p>
+                    <p><strong>Monto:</strong> ${mov.amount}</p>
+                    <p><strong>Fecha:</strong> ${new Date(mov.date).toLocaleDateString()}</p>
+                    <hr>
+                </div>
+            `;
+            });
+        }
+
+        const modal = new bootstrap.Modal(document.getElementById("modal"));
+        modal.show();
+    }
+
 
     showAccountsOrigin() {
         const dni = this.getDNI();
@@ -371,7 +443,7 @@ class UserInterface {
 
     }
 
-    investmentAccountSelect(){
+    investmentAccountSelect() {
         const dni = ui.getDNI();
         const select = document.getElementById("investmentAccountSelect");
         select.innerHTML = "";
@@ -386,6 +458,7 @@ class UserInterface {
             select.appendChild(option);
         });
     }
+
 
 
 

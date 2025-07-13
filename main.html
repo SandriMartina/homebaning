@@ -154,13 +154,17 @@
                         <div class="card-body">
                             <h5 class="card-title">Caja de Ahorro en Pesos</h5>
                             <p id="monedaCajaDeAhorro" class="card-text mb-1"><strong>Moneda:</strong> ARS</p>
-                            <p id="SaldoCajaDeAhorro"class="card-text mb-1"><strong>Saldo:</strong> $120.000</p>
-                            <p id="DescubiertoDisponibleCajaDeAhorro" class="card-text mb-1"><strong>Descubierto disponible:</strong> $5.000</p>
-                            <p id="DescubiertoUsadoCajaDeAhorro" class="card-text mb-1"><strong>Descubierto usado:</strong> $2.000</p>
+                            <p id="SaldoCajaDeAhorro" class="card-text mb-1"><strong>Saldo:</strong> $120.000</p>
+                            <p id="DescubiertoDisponibleCajaDeAhorro" class="card-text mb-1"><strong>Descubierto
+                                    disponible:</strong> $5.000</p>
+                            <p id="DescubiertoUsadoCajaDeAhorro" class="card-text mb-1"><strong>Descubierto
+                                    usado:</strong> $2.000</p>
                             <p id="aliasCajaDeAhorro" class="card-text mb-1"><strong>Alias:</strong> mi.cuenta.pesos</p>
-                            <p id="cbuCajaDeAhorro" class="card-text mb-3"><strong>CBU:</strong> 0123456789012345678901</p>
+                            <p id="cbuCajaDeAhorro" class="card-text mb-3"><strong>CBU:</strong> 0123456789012345678901
+                            </p>
                             <div class="d-grid">
-                                <button class="btn btn-outline-primary btn-sm">Ver movimientos</button>
+                                <button class="btn btn-outline-primary btn-sm" onclick="verMovimientos()">Ver
+                                    movimientos</button>
                             </div>
                         </div>
                     </div>
@@ -226,6 +230,10 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="d-grid">
+                <button class="btn btn-outline-primary btn-sm" onclick="verMovimientos()">Ver movimientos</button>
             </div>
 
         </section>

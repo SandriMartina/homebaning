@@ -62,8 +62,16 @@ function searchMovementsBySavingBankID(savingBankID) {
 }
 
 function searchMovementsByDebitCardID(debitCardID) {
-    const card = debitCards.find(dc => dc.id === debitCardID);
-    return card ? card.movements : null;
+    for (let client of clients) {
+        for (let sb of client.savingsBanks) {
+            for (let card of sb.debitCards) {
+                if (card.id === debitCardID) {
+                    return card.movements || [];
+                }
+            }
+        }
+    }
+    return [];
 }
 
 function searchMovementsByCreditCardID(creditCardID) {
@@ -202,6 +210,35 @@ function logout() {
     }
 }
 
+function verMovimientos(accountId) {
+    const movements = searchMovementsBySavingBankID(accountId);
+    const modalTitle = document.getElementById("modalTitle");
+    const modalBody = document.getElementById("modalBody");
+
+    modalTitle.textContent = "Movimientos de la cuenta";
+    modalBody.innerHTML = "";
+
+    if (!movements || movements.length === 0) {
+        modalBody.innerHTML = "<p>No hay movimientos para esta cuenta.</p>";
+    } else {
+        movements.forEach(mov => {
+            modalBody.innerHTML += `
+                <div class="mb-2">
+                    <p><strong>Nombre del tercero:</strong> ${mov.thirdPartyName}</p>
+                    <p><strong>Monto:</strong> ${mov.amount}</p>
+                    <p><strong>Cuotas:</strong> ${mov.coutes}</p>
+                    <hr>
+                </div>
+            `;
+        });
+    }
+
+    const modal = new bootstrap.Modal(document.getElementById("modal"));
+    modal.show();
+}
+
+
+
 window.searchSavingBankByClientID = searchSavingBankByClientID;
 window.searchDebitCardsByClientID = searchDebitCardsByClientID;
 window.searchDebitCardsByCardID = searchDebitCardsByCardID;
@@ -214,3 +251,4 @@ window.moneyTransfer = moneyTransfer;
 window.changeScreen = changeScreen;
 window.login = login;
 window.registrarse = registrarse;
+window.logout = logout;
