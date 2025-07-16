@@ -210,6 +210,8 @@ function logout() {
     }
 }
 
+console.log(searchMovementsBySavingBankID(1))
+
 function verMovimientos(accountId) {
     const movements = searchMovementsBySavingBankID(accountId);
     const modalTitle = document.getElementById("modalTitle");

@@ -102,15 +102,31 @@ const tarjetaCredito1 = new CreditCard("Visa", "2023-01-15", "123", "Visa Oro", 
 const tarjetaCredito2 = new CreditCard("MasterCard", "2022-05-20", "456", "Master Platinum", "2022-06-15", "2024-05-20");
 const tarjetaCredito3 = new CreditCard("Amex", "2024-03-10", "789", "Amex Blue", "2024-04-05", "2026-03-10");
 const tarjetaCredito4 = new CreditCard("Naranja", "2021-11-01", "321", "Naranja Clásica", "2021-12-01", "2023-11-01");
-const tarjetaCredito5 = new CreditCard("Visa", "2023-07-30", "654", "Visa Débito", "2023-08-20", "2025-07-30");
+const tarjetaCredito5 = new CreditCard("Visa", "2023-07-30", "654", "Visa Crédito", "2023-08-20", "2025-07-30");
+const tarjetaCredito6 = new CreditCard("Visa", "2023-07-30", "654", "Visa Crédito", "2023-08-20", "2025-07-30");
 
 clients[0].creditCards.push(tarjetaCredito1); 
 clients[1].creditCards.push(tarjetaCredito2); 
 clients[2].creditCards.push(tarjetaCredito3); 
 clients[3].creditCards.push(tarjetaCredito4); 
 clients[4].creditCards.push(tarjetaCredito5); 
+clients[0].creditCards.push(tarjetaCredito6); 
 
-creditCards.push(tarjetaCredito1, tarjetaCredito2, tarjetaCredito3, tarjetaCredito4, tarjetaCredito5);
+creditCards.push(tarjetaCredito1, tarjetaCredito2, tarjetaCredito3, tarjetaCredito4, tarjetaCredito5,tarjetaCredito6);
 
 window.Client = Client;
 window.clients = clients;
+
+const movimiento1 = new Movement("COTO", 12000);
+const movimiento2 = new Movement("COTO", 17000);
+const movimiento3 = new Movement("Pollajería Jacinto", 8000);
+const movimiento4 = new Movement("OnlyFans", 300000, 6);
+const movimiento5 = new Movement("Aerolineas Argentinas", 400000, 3);
+const movimiento6 = new Movement("Pedrito Kiosco", 1000);
+
+clients[0].savingsBanks[0].push(movimiento1); 
+clients[0].savingsBanks[0].push(movimiento2); 
+clients[0].savingsBanks[1].push(movimiento3); 
+clients[0].savingsBanks[1].push(movimiento4); 
+clients[1].savingsBanks[0].push(movimiento5); 
+clients[1].savingsBanks[0].push(movimiento6); 
